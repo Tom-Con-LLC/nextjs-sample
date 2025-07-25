@@ -1,13 +1,18 @@
 import TextContainer from '@/app/components/text-container'
-
-const friends = [
-	{ id: 1, name: 'Bark', description: `He is one of my oldest friends. He is 80. I met him when I needed to buy a mountain and he happened to be selling one. But he tricked me and we ended up as roommates on his little mound of sand.` },
-	{ id: 2, name: 'Cloud', description: `She was my real estate broker and was in cahoots with Bark. She somehow managed to access my MBoB and now she forces me to be her friend for pocket money.` }
-]
+import Link from 'next/link';
 
 export default async function Page({ params }) {
 	const { id } = await params;
 
+	const response = await fetch('http://localhost:3001/api/friends')
+
+	if (!response.ok) {
+		return (
+			<div>Error fetching friends data.</div>
+		)
+	}
+
+	const { friends } = await response.json();
 	if (isNaN(Number(id))) {
 		return (
 			<div>That's not a valid id.</div>
@@ -24,6 +29,11 @@ export default async function Page({ params }) {
 
 	return (
 		<div>
+			{friends.map((friend) => (
+				<Link key={friend.id} href={`/my-friends/${friend.id}`} className="text-blue-500 hover:underline">
+					{friend.name}
+				</Link>
+			))}
 			<TextContainer title={foundFriend.name} content={foundFriend.description} />
 		</div>
 	)
