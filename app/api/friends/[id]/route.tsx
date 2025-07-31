@@ -15,5 +15,10 @@ const kn = knex({
 export async function GET(req: Request, { params }) {
 	const { id } = await params;
 	const friend = await kn('friends').where('id', Number(id)).first();
+	
+	if (!friend) {
+		return Response.json({ error: 'Friend not found' }, { status: 404 });
+	}
+	
 	return Response.json({ friend })
 }
